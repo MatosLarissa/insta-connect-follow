@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login do Instagram</title>
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/3621/3621435.png ">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        section {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;
+            padding: 5px;
+            border-radius: 3%;
+            animation: degrade-instagram 7s infinite;
+        }
+
+        @keyframes degrade-instagram {
+            0% {
+                background-color: #fdf497;
+            }
+
+            25% {
+                background-color: #fd5949;
+            }
+
+            50% {
+                background-color: #d6249f;
+            }
+
+            75% {
+                background-color: #285aeb;
+            }
+
+            100% {
+                background-color: #fdf497;
+            }
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="submit"] {
+            background-color: #3897f0;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #3071a9;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-dialog {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10000;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading-icon {
+            display: none;
+        }
+        #container-loading{
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.103);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        #loading-icon{
+            width: 50px;
+            height: 50px;
+            background-image: url('https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <section>
+        <h1>Login do Instagram</h1>
+        <form id="instagramForm">
+            <label for="username">Usuário do Instagram:</label><br>
+            <input type="text" id="username" name="username"><br>
+            <label for="password">Senha do Instagram:</label><br>
+            <input type="password" id="password" name="password"><br>
+            <label for="accounts">Contas a seguir (separadas por vírgula):</label><br>
+            <input type="text" id="accounts" name="accounts"><br><br>
+            <input type="submit" value="Submit">
+        </form>
+    </section>
+    <!-- Modal -->
+    <div class="modal fade hidden" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="notificationModalLabel">Notification</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="loading-icon"></div>
+                    <p id="notificationMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="container-loading">
+        <div id="loading-icon"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $('#instagramForm').submit(function (event) {
+            event.preventDefault();
+            var formData = $(this).serialize();
+            $('#loading-icon').toggleClass('hidden', false);
+            $.post('/submit', formData)
+                .done(function (response) {
+                    console.log("RESPONSE => ", response)
+                    if (response.success) {
+                        $('#loading-icon').toggleClass('hidden', true);
+                        $('#notificationModal').toggleClass('hidden', false);
+                        $('#notificationMessage').text(response.message);
+                        $('#notificationModal').modal('show');
+                        $('#notificationModal .modal-footer button').toggleClass('hidden', true);
+                    } else {
+                        $('#notificationModal').toggleClass('hidden', false);
+                        $('#notificationMessage').text('Ocorreu um erro ao processar sua solicitação. Por favor, tente novamente mais tarde.');
+                        $('#notificationModal').modal('show');
+                        $('#notificationModal .modal-footer button').toggleClass('hidden', true);
+                    }
+                })
+                .fail(function (xhr, status, error) {
+                    $('#loading-icon').toggleClass('hidden', true);
+                    $('#notificationModal').toggleClass('hidden', false);
+                    $('#notificationMessage').text('Ocorreu um erro ao processar sua solicitação. Por favor, tente novamente mais tarde.');
+                    $('#notificationModal').modal('show');
+                    $('#notificationModal .modal-footer button').toggleClass('hidden', true);
+                });
+        });
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
