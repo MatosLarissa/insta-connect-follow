@@ -8,6 +8,10 @@
    🔍 This project is a Flask-based web application that facilitates connecting to Instagram and following multiple accounts automatically. It leverages the instagrapi library to interact with the Instagram API and provides a simple user interface for entering Instagram credentials and the list of accounts to follow.
 </p>
 
+<div align="center">
+  <img  src="https://github.com/MatosLarissa/insta-connect-follow/assets/63737673/62dc68e4-88e5-44f3-ac23-2b1812e1d3ae" alt="App example">
+</div>
+
 <h2>
 Features
 </h2>
